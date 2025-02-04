@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        button { padding: 10px 15px; font-size: 16px; margin: 10px; cursor: pointer; }
+        #password { font-size: 20px; margin-top: 20px; font-weight: bold; }
+        #copy-btn { display: none; } /* Hide copy button initially */
+    </style>
+</head>
+<body>
+    <h1>Password Generator</h1>
+    <button onclick="generatePassword()">Generate Password</button>
+    <p id="password"></p>
+    <button id="copy-btn" onclick="copyPassword()">Copy Password</button>
+
+    <script>
+        function generatePassword() {
+            fetch('/generate')
+                .then(response => response.json())  
+                .then(data => {
+                    let passwordElement = document.getElementById('password');
+                    let copyButton = document.getElementById('copy-btn');
+
+                    passwordElement.innerText = data.password; // Display password
+                    copyButton.style.display = "inline-block"; // Show copy button
+                })
+                .catch(error => {
+                    console.error('Error generating password:', error);
+                });
+        }
+
+        function copyPassword() {
+            let passwordText = document.getElementById('password').innerText;
+            if (!passwordText) return;
+
+            // Create a temporary input element
+            let tempInput = document.createElement("input");
+            tempInput.value = passwordText;
+            document.body.appendChild(tempInput);
+
+            // Select and copy text
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            alert("Password copied to clipboard!");
+        }
+    </script>
+</body>
+</html>
